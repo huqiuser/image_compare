@@ -34,6 +34,16 @@ Future<double> compareImages({
   return result;
 }
 
+Future<String> getImageHash({
+  required var src,
+  HashAlgorithm? hashAlgorithm,
+}) async {
+  hashAlgorithm??= PerceptualHash(); // default algorithm
+  src = await _getImageFromDynamic(src);
+  String hash = hashAlgorithm.getHashFromImage(src);
+  return hash;
+}
+
 /// Compare [target] to each image present in [list] using a
 /// specified [algorithm]. If [algorithm] is not specified, the default (PixelMatching())
 /// is supplied.

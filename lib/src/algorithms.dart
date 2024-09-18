@@ -342,6 +342,10 @@ abstract class HashAlgorithm extends Algorithm {
     return 0.0; //default return
   }
 
+  String getHashFromImage(Image img) {
+    return "";
+  }
+
   /// Helper function used by subclasses to return hamming distance between two hashes
   double _hammingDistance(String str1, String str2) {
     var distCounter = (str1.length - str2.length).abs();
@@ -383,6 +387,23 @@ class PerceptualHash extends HashAlgorithm {
     var hash2 = calcPhash(_pixelListPair._second);
 
     return _hammingDistance(hash1, hash2);
+  }
+
+  @override
+  String getHashFromImage(Image img) {
+    Image src = copyResize(img, height: 32, width: 32);
+
+    var pixelList= [];
+
+    // Bytes for [src1] and [src2]
+    var bytes1 = src.getBytes();
+    final bytesPerPixel = 4;
+    for (var i = 0; i <= bytes1.length - bytesPerPixel; i += bytesPerPixel) {
+      pixelList.add(Pixel(bytes1[i], bytes1[i + 1], bytes1[i + 2], bytes1[i + 3]));
+    }
+
+    var hash = calcPhash(pixelList);
+    return hash;
   }
 
   /// Helper function which computes a binary hash of a [List] of [Pixel]
